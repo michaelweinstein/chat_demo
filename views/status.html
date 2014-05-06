@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	    <title>Status | Accessible Facebook UI</title>
+	    <!--Meta Tags-->
+	    <!--CSS-->
+	    <link rel='stylesheet' type='text/css' href='css/main.css'/>
+        <link rel='stylesheet' type='text/css' href='css/page_framework.css'/>
+	    <link rel='stylesheet' type='text/css' href='css/status.css'/>
+        <link rel='stylesheet' type='text/css' href='css/keyboard.css'/>
+	</head>
+	
+	<body>
+
+        <div id='left_bar'> 
+            <ul class='bar_content'>
+                <li>
+                    <div class='side_button'>
+                        <img src="/images/page_framework/LeftButton.svg">
+                        <p>Home</p>
+                    </div>
+                </li>
+                <li>
+                    <div class='side_button'>
+                        <img class='LeftButton' src="images/page_framework/LeftButton.svg">
+                        <!-- <img class='WhiteLeftButton' src="images/page_framework/WhiteLeftButton.svg"> -->
+                        <p>Back</p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div id='container'>
+            <div id='frame'>
+        		<div id='fb-root'></div>
+        		<form id='statusForm'>
+        			<!-- <input id='statusInput' type='text' name='status' autocomplete='off' autofocus placeholder="What's on your mind?"> -->
+        			<textarea id='statusInput' type='text' name='status' autocomplete='off' placeholder="What's on your mind?"></textarea>
+        			<input id='statusSubmit' type='submit'>
+        		</form>
+            </div>
+        </div>
+
+        <div id='right_bar'>
+            <ul class='bar_content' id='catch'>
+                <li>
+                    <div class='side_button'>
+                        <img class='RightButton' src="images/page_framework/RightButton.svg">
+                        <!-- <img class='WhiteRightButton' src="images/page_framework/WhiteRightButton.svg"> -->
+                        <p>POST</p>
+                    </div>                    
+                </li>
+            </ul>
+        </div>
+
+    </body>
+
+	
+	<!--Scripts-->
+	<script type='text/javascript' src='js/jquery/jquery.js'></script>
+	<script type='text/javascript' src="js/colorui.js"></script>
+	<script type="text/javascript" src="js/dwell_gist.js"></script> 
+    <script type="text/javascript" src="js/image_fade_gist.js"></script> 
+	<script type='text/javascript' src='js/status.js'></script>
+	<script type='text/javascript' src='js/login.js'></script>
+    <script type='text/javascript' src='js/main.js'></script>
+    <script type='text/javascript' src='js/keyboard.js'></script>
+</html>

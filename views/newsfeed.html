@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	    <title>Newsfeed | Accessible Facebook UI</title>
+	    <!--Meta Tags-->
+	    <!--CSS-->
+	    <link rel='stylesheet' type='text/css' href='css/main.css'/>
+	    <link rel='stylesheet' type='text/css' href='css/page_framework.css'/>
+        <link rel='stylesheet' type='text/css' href='css/newsfeed.css'/>
+	</head>
+	
+	<body>
+		<div id='fb-root'></div>
+		<div id='left_bar'> 
+            <ul class='bar_content'>
+                <li>
+                    <div class='side_button'>
+                        <img src="images/page_framework/LeftButton.svg">
+                        <p>Home</p>
+                    </div>
+                </li>
+                <li>
+                    <div class='side_button'>
+                        <img src="images/page_framework/LeftButton.svg">
+                        <p>Back</p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div id='container'>
+            <div id='top_bar' class='previous'>
+                <img src="images/page_framework/WhiteTopButton.svg">
+            </div>
+
+            <div id='bottom_bar' class='next'>
+                <img src="images/page_framework/WhiteBottomButton.svg">
+            </div>
+
+            <div id='frame'>
+				<header>
+					<h1>Newsfeed</h1>
+				</header>
+
+				<div id='newsfeed'>
+					<div id='feedItem'>
+						<div id='from'>
+							<div id='from_photo'/></div>
+							<div id='from_name'/>
+						</div>
+						<div id='story'></div>
+						<div id='message'></div>
+						<div id='image'></div>
+                        <div id='description'></div>
+					</div>
+
+					<button id='refresh'>Refresh</button>
+				</div>
+			</div>
+        </div>
+
+        <div id='right_bar'>
+            <ul class='bar_content'>
+                <li>
+                    <div id='like' class='side_button'>
+                        <img src="images/LikeButton.svg">
+                        <p>Like</p>
+                    </div>                    
+                </li>
+                <li>
+                    <div id='comment' class='side_button'>
+                        <img src="images/CommentIcon.png">
+                        <p>Comment</p>
+                    </div>                    
+                </li>
+            </ul>
+        </div>
+	</body>
+	
+	<!--Scripts-->
+	<script type='text/javascript' src='js/jquery/jquery.js'></script>
+    <script type='text/javascript' src="js/colorui.js"></script>
+    <script type="text/javascript" src="js/dwell_gist.js"></script> 
+    <script type="text/javascript" src="js/image_fade_gist.js"></script>     
+	<script type='text/javascript' src='js/newsfeed.js'></script>
+	<script type='text/javascript' src='js/login.js'></script>
+    <script type='text/javascript' src='js/main.js'></script>
+</html>

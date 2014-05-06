@@ -1,0 +1,32 @@
+body{
+	height: 100%;
+	background-color: #e5e5e5;
+}
+#statusInput{
+	width: 90%;
+	/*width: 500px;*/
+	height: 70%;
+	font-size: 20px;
+	position: absolute;
+	/*vertical-align: top;*/
+	line-height: 100%;
+}
+#statusSubmit{
+	display: none;
+}
+::-webkit-input-placeholder {
+	/*vertical-align: top;  */
+}
+input{
+	display: flex;
+	align-items:top;
+}
+#catch{
+	/*border: 2px red solid;*/
+}
+.kiwi{
+	fill: #94d31b; 
+}
+#right_bar{
+	/*border: 2px red solid;*/
+}

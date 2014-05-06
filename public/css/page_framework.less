@@ -1,0 +1,142 @@
+@side_width: 10%;
+@side_height: 100%;
+
+@tb_height: 10%;
+@tb_width: 100%;
+
+@frame_width: 100% - (@side_width * 2) - 2px;
+@frame_margin: @side_width + 1%;
+@frame_height: 100%;
+
+@bar_color: #f2f2f2;
+@fb_blue: #4860a5;
+@border_color: #777777;
+
+body {
+	color: @fb_blue;
+	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+	font-weight: 300;
+}
+
+/** Left & Right Bars **/
+
+#right_bar, #left_bar {
+	width: @side_width + 1%;
+	height: @side_height;
+	background-color: @bar_color;
+
+	position: fixed;
+	top: 0;
+	bottom: 0;
+
+	text-align: center;
+
+	display: flex;
+}
+
+#right_bar {
+	border-left: 2px solid @border_color;
+	right: 0;
+}
+
+#left_bar {
+	border-right: 2px solid @border_color;
+	left: 0;
+}
+
+.bar_content {
+	width: 100%;
+	vertical-align: middle;
+	list-style: none;
+
+	margin: auto;
+}
+#right_bar > ul > li{
+	margin-bottom: 60px; 
+}
+/*#right_bar > ul > li:nth-child(1){
+	margin-bottom: 60px; 
+}*/
+#left_bar > ul > li:nth-child(1){
+	margin-bottom: 60px; 
+}
+.side_button {
+	cursor: pointer;
+	box-sizing: border-box;
+	width: 100%;
+	padding: 5%;
+	text-align: center;
+	// border-top: 2px solid @border_color;
+
+	img {
+		height: 50px;
+		width: 50px;
+		margin: 7% 0%;
+	}
+
+	p {
+		margin: 2% 0%;
+	}
+}
+
+.bar_content > li:last-child > .side_button {
+	// border-bottom: 2px solid @border_color;
+}
+
+/** Container **/
+
+#container {
+	height: 100%;
+	width: @frame_width;
+	margin: 0 @frame_margin;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+}
+
+#frame {
+	height: 100%;
+	box-sizing: border-box;
+	position: absolute; 
+	padding: 8% 3%;
+	overflow: scroll;
+	width:100%;
+}
+
+#top_bar, #bottom_bar {
+	cursor: pointer;
+	height: @tb_height;
+	width: @tb_width;
+	position: absolute;
+
+	display: flex;
+	align-items: center;
+	text-align: center;
+
+	background-color: @fb_blue;
+	opacity: .4;
+
+	z-index: 10000000;
+
+	img {
+		line-height: 100%;
+		vertical-align: middle;
+		margin: auto;
+
+		height: 50px;
+		width: 50px;
+	}
+}
+.RightButton{
+	/*position: absolute;*/
+}
+.LeftButton{
+	/*position: absolute;*/
+}
+#bottom_bar {
+	bottom: 0;
+}
+
+#top_bar {
+	top: 0;
+}
