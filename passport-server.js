@@ -118,6 +118,29 @@ app.listen(8080);
 
 // =========== Express END ===========
 
+/*app.get('/messaging', function(req, res) {
+///////////////
+	var pass = 'CaDeew98';
+	var xmpp = require('node-xmpp');
+	var args = {
+	    jid: '-' + 'michael.weinstein.39' + '@chat.facebook.com', 
+	    api_key: FACEBOOK_APP_ID,
+	    secret_key: FACEBOOK_APP_SECRET,
+	    access_token: FB_ACCESS_TOKEN, 
+	    host: 'chat.facebook.com',
+	};
+
+	var client = new xmpp.Client(args);
+
+	client.on('error', function(error) {
+		console.log('ERROR: ' + 'Error after connecting to client ' + error);
+	});
+
+	console.log("-- xmpp client: " + client);
+////////////^^^^^^^
+});*/
+
+
 // Simple route middleware to ensure user is authenticated.
 //   Use this route middleware on any resource that needs to be protected.  If
 //   the request is authenticated (typically via a persistent login session),
