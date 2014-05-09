@@ -1,70 +1,3 @@
-// var user;
-
-// $.noConflict();
-jQuery.noConflict(true);
-
-var count=0;
-/* livquery overloading $ 
-Creates elements then calls styleStart
-to add listeners to them.*/
-/*$(function() {
-	$('.chat-message').livequery(function() {
-       // $(".chat-content").before("<br>");
-       if(count === 0){
-			
-       		//Let's hide some stuff we don't need
-			$('.chat-title').hide();
-			$('.chat-content').hide();	
-			$('#controlbox').hide();			
-
-
-			//And get ourselves set up
-		    $(".chat-content").before("<br>");
-			$('.chatbox').after('<div class="border-div"></div>');
-			$('.border-div:first').css('display', 'none');
-			$('.border-div:last').css('display', 'none');
-
-			//for each chatbox       	
-       		$('.chatbox').each(function(){
-
-       			// Get our info
-				var name = $.trim($(this).children('.chat-head').text());
-				var message = $.trim($(this).children('.chat-content').html());
-				id = $.trim($(this).attr('id')) + '-button';
-				var txt = "<ul class='txt'><li class='name'> " + name + " </li><li class='message'> "+ message +" <li></ul>";
-				var right_bar_button='';
-
-
-				//Add our next button
-				if(name != 'ContactsRooms'){
-					right_bar_button = "<div class='side_button' id='"+id+"'><img src='../images/page_framework/RightButton.svg'><p>View</p> </div>";	
-				}
-
-
-				//Back from full convo
-				// var back_full_convo = "<div class='side_button' id='"+id+"'><img src='../images/page_framework/LeftButton.svg'><p>Back</p> </div>";	
-				// var back_compose = "<div class='side_button' id='"+id+"'><img src='../images/page_framework/LeftButton.svg'><p>Back</p> </div>";	
-
-
-				var clicky = 'div#'+id;
-
-				
-				// console.log('pic '+pic);
-				$(this).children('div.chat-head.chat-head-chatbox').after(right_bar_button);
-				$(this).children('div.chat-head.chat-head-chatbox').after(txt);
-
-
-			  });
-
-			styleStart();
-			count++;
-       }
-
-       console.log('message added');
-       
-	});
-
-});*/
 
 /* Abby's start() method from abby_js.js.
 Creates listeners for created elements. */
@@ -79,7 +12,7 @@ var id='';
 		$('.chat-message').show();
 		$(this).parent().css('display', 'block');
 		id = $(this).parent().attr('id');
-		// alert(id);
+		alert($(this).parent());
 
 		//buttons
 		$('#compose_button').show();
@@ -96,6 +29,7 @@ var id='';
 
 	})
 
+	// alert('set up');
 	//Compose Reply	
 	$('#compose_button').on('click',function(){
 		$('.chat-message').hide();
@@ -132,7 +66,7 @@ var id='';
 	//Post
 	$('#post_button').on('click', function(){
 	// $('textarea.chat-textarea').on('click', function() {
-		// alert('posted');
+		alert('posted');
 		// $('.sendXMPPMessage').submit();
 		// $('.chat-textarea').submit();
 		// var enter = 13;
@@ -141,12 +75,12 @@ var id='';
 		// e.which = 13; // some value (backspace = 8)
 		// $('textarea.chat-textarea').trigger(e);
 
-		var e = jQuery.Event("keypress", {keyCode: 13});
-		e.which = 13; 
+		// var e = jQuery.Event("keypress", {keyCode: 13});
+		// e.which = 13; 
 		// $('textarea.chat-textarea').on('keypress', function(e) {
 		//    console.log(e.which);
 		// });
-		$('textarea.chat-textarea').trigger(e);
+		// $('textarea.chat-textarea').trigger(e);
 
 		// $(document).trigger(e);​
 	});
@@ -173,6 +107,7 @@ function start(FB) {
 			});*/
 	// Initialize Converse.js on start(), and pass in FB object 
 	startConverse(FB);
+	// styleStart(); //ADDED FRIDAY 3:30
 }
 
 /* Initialize Converse.js; pass it valid FB object on start() */
@@ -201,14 +136,73 @@ function startConverse(FB) {
 		// .chat-message (<div> message object)
 		converse.on('show_new_message', function(e, message) {
 			console.log('CAUGHT -- show_new_message Event CAUGHT!!');
-			console.log(message);
+			// console.log('-----------------');
+			// console.log(message);
+			// $(message).show();
+			// $(message).css('border', '3px red solid');
+			// console.log('-----------------');
+			refactor2(message);
 		});
 		// .chat-box (box id)
 		converse.on('new_chat_box', function(e, boxID) {
 			console.log('CAUGHT -- new_chat_box Event Caught');
-			console.log(el);
+			console.log(boxID);
+			// refactor2(boxID);
 		});
     });
 }
 
+console.log('setting up rendered rooms');
+var count=0;
+var rendered_rooms = {};
+var rendered_array = [];
+
+function refactor2(id){
+	if(count === 0){
+		
+		//And get ourselves set up
+	    $(".chat-content").before("<br>");
+		$('.chatbox').after('<div class="border-div"></div>');
+		$('.border-div:first').css('display', 'none');
+		$('.border-div:last').css('display', 'none');
+		count++;
+   }
+
+//for each chatbox       	
+	$('.chatbox').each(function(){
+		var thisID = $(this).attr('id');
+		if( rendered_rooms[thisID] == undefined ){
+			//Let's hide some stuff we don't need
+			$('.chat-title').hide();
+			$('.chat-content').hide();	
+			$('#controlbox').hide();	
+
+			console.log('___________________')
+			console.log(thisID);
+			// Get our info
+			var name = $.trim($(this).children('.chat-head').text());
+			var message = $.trim($(this).children('.chat-content').html());
+			id = $.trim($(this).attr('id')) + '-button';
+			var txt = "<ul class='txt'><li class='name'> " + name + " </li><li class='message'> "+ message +" <li></ul>";
+			var right_bar_button='';
+
+			//Add our next button
+			if(name != 'ContactsRooms'){
+				right_bar_button = "<div class='side_button' id='"+id+"'><img src='../images/page_framework/RightButton.svg'><p>View</p> </div>";	
+			}
+			
+			// console.log('pic '+pic);
+			$(this).children('div.chat-head.chat-head-chatbox').after(right_bar_button);
+			$(this).children('div.chat-head.chat-head-chatbox').after(txt);		
+
+			//say room has been rendere
+			rendered_rooms[thisID] = true;	
+		}
+		styleStart();
+			
+
+  });
+
+
+}
 
