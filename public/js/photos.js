@@ -2,7 +2,16 @@ var user;
 var curr_pic;
 var first_photo=null;
 var pause = false;
-$(document).ready(function() {
+// Global variable to store picture info and album info
+var pic_data = {"photos":{"next":null,"data":{},"num":0,"loadMore":null},"albums":{"next":null,"data":{},"num":0,"loadMore":null},"photos_tagged":{"next":null,"data":{},"num":0,"loadMore":null}};
+
+// Global variable to store picture info albums
+var album_data = {};
+var times = {};
+var colors = {};
+// $(document).ready(function() {
+$(window).load(function() {
+
 	// Hides right side bar nav buttons
 	$("#right_bar li").hide();
 
@@ -28,53 +37,57 @@ $(document).ready(function() {
 	});
 
 	// Shows comment form for pictures
-	$("#right_bar li:nth-of-type(2)").on("click", function(){
-		// Hides everything in the frame
-		$("#main_container:not(#keyboard_container)").hide();
-		// Hides all right side bar content (like, comment, next functionality)
-		$("#right_bar li:not(#keyboard_container)").hide();
-		// Appends new right side bar content for submitting form
-		$("#right_bar ul").append("<li id='tmp_button'><div class='side_button'><img src='/images/page_framework/RightButton.svg'><p>Submit</p></div></li>");
-		// Appends form in new div
-		// $("#dialog").show();
-		$("#comment_form").show();
+	$("#nav_bar-comment").on("click", function(){
+		if(!shouldPause("bar")){
+			// Hides pause button so form won't submit weirdly
+			$("#left_bar li:last-of-type p").text("Pause Main Content");
+			$("#left_bar li:last-of-type").hide();
+			// Hides everything in the frame
+			$("#main_container:not(#keyboard_container)").hide();
+			// Hides all right side bar content (like, comment, next functionality)
+			$("#right_bar li").hide();
+			// Appends new right side bar content for submitting form
+			$("#right_bar ul").append("<li id='tmp_button'><div class='side_button'><img src='/images/page_framework/RightButton.svg'><p>Submit</p></div></li>");
+			// Appends form in new div
+			$("#comment_form").show();
 
-		//ADDED THIS BIT RIGHT HERE!!!!!
-		$.getScript( "/js/keyboard.js", function() {
-			console.log( "Load was performed." );
-		});
+			//Add keyboard
+			$.getScript( "/js/keyboard.js", function() {
+				console.log( "Load was performed." );
+			});
+		}
 	});
 
 	// Binds "submit" button on right bar to submitting comment form
 	$("#right_bar").on("click","#tmp_button",function(e){
-		// $("#form_button").click();
-		$("#form_button").click();
-
+		e.stopPropagation();
+		if(!shouldPause("main")){
+			$("#form_button").click();
+		}
 	});
 
 	// Submits comments on a picture and returns page back to 
 	//	previous state
-	// $("#frame").on("click","#form_button",function(){
-
 	$('#comment_form').submit(function(e) {
+		e.stopPropagation();
 		e.preventDefault();
 		var body = $('#form_input').val();
 		$('#comment_form textarea').html('');
 		FB.api("/"+curr_pic+"/comments", "post", {message:body},  function(response) {
-			console.log(response);
 		});
 		$("#main_container").show();
 		$("#keyboard_container").remove();
 		$("#comment_form").hide();
-
+		$("#left_bar li:last-of-type").show();
 		$("#tmp_button").remove();
+		$("#bottom_bar").show();
 		$("#right_bar li").show();
 	});
 
 	// Binds thumbnail picture image with click event
-	$('#mainPhoto').dwell(1000, true, 'white', 'white');
 	$("#mainPhoto").on("click", ".photos", function(e){
-		if(!pause){
+		e.stopPropagation();
+		if(!shouldPause("main")){
 			var data = $(this).attr("data-all").split(",");
 			if(data.length<3){
 				// Goes to "Photo" / "Tagged Photos" pic
@@ -88,59 +101,63 @@ $(document).ready(function() {
 
 	// Home button
 	$("#left_bar li:first-of-type").click(function(){
-		window.location.href="/";
+		if(!shouldPause("bar")){
+			window.location.href="/";
+		}
 	});
 
 	// Back bar -- window.back for pages, 
 	// 	Goes back to individual picture for individual pictures
 	$("#left_bar li:nth-of-type(2)").click(function(){
-		getPageType();
+		if(!shouldPause("bar")){
+			getPageType();
+		}
 	});
 
-	// $("#left_bar li:last-of-type").click(function(){
-	// 	pause = !pause;
-	// 	console.log("PAUSED CHANGED "+pause);
-	// 	if(pause){
-	// 		$("#left_bar li:last-of-type p").text("Unpause Main Content");
-	// 	}else{
-	// 		$("#left_bar li:last-of-type p").text("Pause Main Content");
-	// 	}
-	// });
+	$("#left_bar li:last-of-type").click(function(){
+		var nextMsg = getNextPause();
+		pause = nextMsg.search("Main")<0;
+		$("#left_bar li:last-of-type p").text(nextMsg);
+	});
 
 	// Scrolls down
 	$("#bottom_bar").click(function(){
-		$(".loadMore").click();
-		scrollVertical(300);
+		if(!shouldPause("bar")){
+			$(".loadMore").click();
+			scrollVertical(300);
+		}
 	});
 
 	// Goes to next picture if looking at individual pictures when TOP 
 	//	nav bar on right is clicked (the one that sayd "next")
-	$("#right_bar li:first-of-type").click(function(){
+	$("#nav_bar-next").click(function(){
 		// If one picture is being displayed, as opposed to an album
-		if(meta("one_pic")=="true"){
-			var data = $("#mainPhoto img").attr("data-all");
-			var data_lis = data.split(",");
-			// Get next picture in the list
-			if(data_lis[0]=="albums"){
-				var next = album_data[data_lis[2]]["pics"][data_lis[1]].my_next;
-				if(next==null){
-					// Loads more photos if there are any
-					//	"next" is null if there are more pics to be loaded
-					$("#mainPhoto").append(album_data[data_lis[2]].button);
-					$(".loadMore").click();
+		if(!shouldPause("bar")){
+			if(meta("one_pic")=="true"){
+				var data = $("#mainPhoto img").attr("data-all");
+				var data_lis = data.split(",");
+				// Get next picture in the list
+				if(data_lis[0]=="albums"){
+					var next = album_data[data_lis[2]]["pics"][data_lis[1]].my_next;
+					if(next==null){
+						// Loads more photos if there are any
+						//	"next" is null if there are more pics to be loaded
+						$("#mainPhoto").append(album_data[data_lis[2]].button);
+						$(".loadMore").click();
+					}else{
+						goToPic(data_lis[0],next,data_lis[2]);
+					}
 				}else{
-					goToPic(data_lis[0],next,data_lis[2]);
-				}
-			}else{
-				var next = pic_data[data_lis[0]]["data"][data_lis[1]].my_next;
-				if(next==null){
-					// Loads more photos if there are any
-					//	"next" is null if there are more pics to be loaded
-					$("#mainPhoto").append(pic_data[data_lis[0]].loadMore);
-					$(".loadMore").click();
-				}else{
-					goToPic(data_lis[0],next,data_lis[1]);
-					
+					var next = pic_data[data_lis[0]]["data"][data_lis[1]].my_next;
+					if(next==null){
+						// Loads more photos if there are any
+						//	"next" is null if there are more pics to be loaded
+						$("#mainPhoto").append(pic_data[data_lis[0]].loadMore);
+						$(".loadMore").click();
+					}else{
+						goToPic(data_lis[0],next,data_lis[1]);
+						
+					}
 				}
 			}
 		}
@@ -148,84 +165,109 @@ $(document).ready(function() {
 
 	// Scrolls up when top bar clicked
 	$("#top_bar").click(function(){
-		scrollVertical(-300);
+		if(!shouldPause("bar")){
+			scrollVertical(-300);
+		}
 	});
 
 	// *DWELL*
-	// ***************KEYBOARD START
+	// KEYBOARD START
 	$('textarea, input').dwell(1000, true, 'white', 'black');
-	// $('#frame').dwell(1000, true, $('#frame').css('background-color'));
-	// $('#frame').click(function(){
-		// $('textarea').blur();
-	// })
 	$('#right_bar').mouseenter(function(){
-		$('textarea').blur();
-		console.log('lol');
+		if(!shouldPause("main")){
+			$('textarea').blur();
+		}
 	});
-	// ***************KEYBOARD END
-	// Keyboard dwelling
-	//	This is where you like things
-	// $("#frame").on("mouseenter", ".innerfolder", function(e) {
-	// 	console.log("click adfdsf");
-	// 	if(pause){
-	// 		return false;
-	// 	}
-	// 	$(this).dwell(1000, true);
-	// });
-
-	// $("#frame").on("click", ".innerfolder", function(e) {
-	// 	e.preventDefault();
-	// 	console.log("click adfdsf");
-	// 	if(pause){
-	// 		return false;
-	// 	}
-	// 	// $(this).dwell(1000, true);
-	// });
 	
 
-	$("#right_bar li:last-of-type").on("click", function(){
-		FB.api("/"+curr_pic+"/likes", "post",  function(response) {
-		});
+	$("#nav_bar-like").on("click", function(){
+		if(!shouldPause("bar")){
+			FB.api("/"+curr_pic+"/likes", "post",  function(response) {
+			});
+		}
 	});
 	// Dwell for comment submit button 
 	$("#right_bar").on("mouseenter", "#tmp_button", function(){
-		$(this).dwell(1000,true);
+		if(!shouldPause("bar")){
+			$(this).dwell(1000,true);
+		}
 	});
 	// Dwell for top bar
 	$("#top_bar").dwell(1000, true);
-	// Enables dwell click for dynamically generated html folders
-	$("#main_container").on("mouseenter", ".innerfolder", function(e){
-		if(!pause){
-			console.log("it's here 2 ");
-			$(this).dwell(1000, true);
-		}
-	});
-
-	$(".folders").on("click", ".innerfolder", function(e){
-		console.log("hahah here ");
-		if(!pause){
-			var data = $(this).attr("data-all");
-			console.log("DATA DDD "+data);
-			window.location.href=data;
-		}
-	});
-
+	
 	// Dwell clicks when user mouses over image thumbnail
 	$("#mainPhoto").on("mouseenter", ".photos", function(e){
-		if(!pause){
-			$(this).dwell(1000, true);
+		e.stopPropagation();
+		if(shouldPause("main")){
+			return false;
+		}
+		$(this).dwell(1000, true);	
+	});
+
+	$(".folders").on("click", ".outfold", function(e){
+		var data = $(this).attr("data-all");
+		goToUrl(data);
+	});
+
+	// Dwell click for dynamically generated folders
+	$(".folders").on("mouseenter", ".outfold", function(e){
+		e.stopPropagation();
+		if(shouldPause("main")){
+			console.log("paused");
+			return false;
+		}else{
+			var data = $(this).attr("data-all");
+			var oldTime = times[$(this).attr("id")];
+			if(oldTime!=null&&oldTime!=undefined){
+				 clearTimeout(oldTime);
+			}
+			var color = $(this).css("background-color");
+			if(colors[$(this).attr("id")]==null||colors[$(this).attr("id")]==undefined){
+				colors[$(this).attr("id")]=color;
+			}
+			var time = setTimeout(function(){
+				console.log("dwelling");
+				goToUrl(data);
+			}, 1000);
+			times[$(this).attr("id")]=time;
+			$(this).animate({
+                backgroundColor: '#038'
+            }, 1000);
 		}
 	});
 
-	
+	// Quits dwell on exit of item for top bar folders 
+	$(".folders").on("mouseleave", ".outfold", function(e){
+		$(this).attr({fill: '#eee',});
+		var oldTime = times[$(this).attr("id")];
+		if(oldTime!=null&&oldTime!=undefined){
+			 clearTimeout(oldTime);
+		}
+
+		times[$(this).attr("id")]=null;
+		$(this).css("background-color", colors[$(this).attr("id")]);
+		$(this).stop();
+	});
+
+	// Enables dwell click for dynamically generated html folders
+	$("#main_container").on("mouseenter", ".innerfolder", function(e){
+		e.stopPropagation();
+		if(pause){
+			return;
+		}
+		$(this).dwell(1000, true);
+	});
 	// Binds back bar with dwell click
 	$("#left_bar li").dwell(1000, true);
 	// Dwell for bottom bar
 	$("#bottom_bar").dwell(1000, true);
 	// Dwell for next bar
-	$("#right_bar .side_button:first-of-type").dwell(1000, true);
-});
+	$("#nav_bar-next").dwell(1000, true);
+	$("#nav_bar-like").dwell(1000, true);
+	$("#nav_bar-comment").dwell(1000, true);
 
+});
+	
 /*
 * start
 * 
@@ -254,6 +296,37 @@ function start(FB) {
 	});
 }
 
+// Gets next message to display on pause button
+function getNextPause(){
+	var currName = $("#left_bar li:last-of-type p").text();
+	if(currName=="Pause Main Content"){
+		// $(".")
+		return "Pause All Content";
+	}else if(currName=="Pause All Content"){
+		return "Unpause All Content";
+	}else{
+		return "Pause Main Content";
+	}
+}
+
+// Determines which clickable content should be paused when called
+function shouldPause(item){
+	var currName = $("#left_bar li:last-of-type p").text();
+	// "Unpause" is shown if everything is paused 
+	if(currName.search("Unpause")>=0){
+		return true;
+		// "Pause all" is shown if only main content is paused
+	}else if(currName.search("Pause All")>=0){
+		if(item=="main"){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	// "Pause main" is shown if nothing is paused 
+	return false;
+}
+
 // Scrolls up or down page
 function scrollVertical(num) {
     var iScroll = $("#frame").scrollTop();
@@ -267,11 +340,12 @@ function scrollVertical(num) {
 // Gets info on whether there is a single photo being viewed or not
 function getPageType(){
 	// If comment box is visible
-	// if($("#dialog").is(":visible")){
 	if($("#comment_form").is(":visible")){
 		$("#main_container").show();
+		$("#left_bar li:last-of-type").show();
 		$("#keyboard_container").remove();
 		$("#comment_form").hide();
+		$("#bottom_bar").show();
 		$("#tmp_button").remove();
 		$("#right_bar li").show();
 	// If only one picture is not being displayed
@@ -375,22 +449,17 @@ function meta(name) {
     return '';
 }
 
-// Global variable to store picture info and album info
-var pic_data = {"photos":{"next":null,"data":{},"num":0,"loadMore":null},"albums":{"next":null,"data":{},"num":0,"loadMore":null},"photos_tagged":{"next":null,"data":{},"num":0,"loadMore":null}};
-
-// Global variable to store picture info albums
-var album_data = {};
-
 // Loads the preliminary info on the page when user first enters
 // Function that shows folders at top bar
 function renderApp(id) {
 	console.log('renderApp was called');
-	$("#folders").append("<button id='phot' class='innerfolder' data-all='/"+id+"/photos/photos'>Photos</button>");
-	$("#folders").append("<button id='photTag' class='innerfolder' data-all='/"+id+"/photos/photos_tagged'>Tagged Photos</button>");
-	$("#folders").append("<button id='alb' class='innerfolder' data-all='/"+id+"/photos/albums'>Albums</button>");
-	// $("#folders").append("<div id='phot' class='innerfolder'><a href='/"+id+"/photos/photos'>Photos</a></div>");
-	// $("#folders").append("<div id='photTag' class='innerfolder'><a  href='/"+id+"/photos/photos_tagged'>Tagged Photos</a></div>");
-	// $("#folders").append("<div id='alb' class='innerfolder'><a href='/"+id+"/photos/albums'>Albums</a></div>");
+	$("#folders").append("<button id='phot' class='outfold' data-all='/"+id+"/photos/photos'>Photos</button>");
+	$("#folders").append("<button id='photTag' class='outfold' data-all='/"+id+"/photos/photos_tagged'>Tagged Photos</button>");
+	$("#folders").append("<button id='alb' class='outfold' data-all='/"+id+"/photos/albums'>Albums</button>");
+
+	// $("#folders").append("<div id='phot' class='outfold'><a href='/"+id+"/photos/photos'>Photos</a></div>");
+	// $("#folders").append("<div id='photTag' class='outfold'><a  href='/"+id+"/photos/photos_tagged'>Tagged Photos</a></div>");
+	// $("#folders").append("<div id='alb' class='outfold'><a href='/"+id+"/photos/albums'>Albums</a></div>");
 }
 
 // Checks to see if nav bars should be displayed or not
@@ -409,12 +478,9 @@ function showAlbum(name,id){
 	var data = pic_data.albums.data;
 	$("#mainPhoto").empty();
 	$("#mainPhoto").show();
-
 	$('#mainPhoto').append(pic_data.albums.loadMore);
 	for(var x in data){
 		$("#mainPhoto").append("<button class='innerfolder'><a href='/"+id+"/photos/albums/"+x+"'>"+data[x].name+"</a></button>");
-
-		// $("#mainPhoto").append("<button class='innerfolder' data-all='/"+id+"/photos/albums/"+x+"'>"+data[x].name+"</button>");
 	}
 }
 
@@ -439,13 +505,13 @@ function getPhotos(id, toAppend, data, toUpload, toHide){
 			data.next=next;
 			data.loadMore="<button class='loadMore' style='display:none' onclick='loadPosts(\""+toAppend+"\")'>Load More</button>";
 			var firstID = arr[0].id;
-			if(next!=null||next!=undefined){
+			if(next!=null&&next!=undefined){
 				firstID = null;
 			}
 			var prevID = null;
 			for(var x in arr){
 				arr[x].my_previous = prevID;
-				arr[x].my_next = firstID;
+				arr[x].my_next = null;//firstID;
 				
 				if(prevID!=null){
 					data.data[prevID].my_next=arr[x].id;
@@ -503,13 +569,15 @@ function goToAlbum(dataID) {
 			var obj = {"next":next,"pics":{},"button":"<button class='loadMore' style='display:none' onclick='loadAlbumPosts(\""+dataID+"\")'>Load More</button>"}
 			$('#mainPhoto').append(obj.button);
 			var firstID=arr[0].id;
-			if(next!=null||next!=undefined){
+			if(next!=null&&next!=undefined){
 				firstID = null;
 			}
 			var prevID = null;
 			for(var x in arr){
 				arr[x].my_previous = prevID;
-				arr[x].my_next = firstID;
+
+				// HERE???
+				arr[x].my_next = null;// firstID;
 				if(prevID!=null){
 					obj["pics"][prevID].my_next=arr[x].id;
 				}
@@ -534,15 +602,18 @@ function changeMeta(name, toChange){
 	$("meta[name="+name+"]").attr("content", toChange);
 }
 
+// Goes to the given url
+function goToUrl(url) {
+	window.location.href=url;
+}
+
 // Displays photo individually with comments and like data
 function goToPic(fold, id, folderID){
 	$("#frame").animate({
-    	scrollTop: 500
+    	scrollTop: 350
     }, 1000);
 
-	$("#left_bar li:last-of-type").hide();
-	
-   if(first_photo==null&&meta("one_pic")=="false"){
+	if(first_photo==null&&meta("one_pic")=="false"){
 		first_photo=id;
 		changeMeta("one_pic", "true");
 
@@ -555,15 +626,31 @@ function goToPic(fold, id, folderID){
 	if(folderID!=undefined&&fold=="albums"){
 		data = album_data[folderID].pics[id];
 	}
+	
+	var main_likes ="";
+	if(data.likes!=undefined){
+		main_likes = data.likes.data.length;
+	}
+	var main_likes_data="";
+	if(main_likes==1){
+		main_likes_data="<div class='like_container'><img src='/images/LikeButton.svg'> "+main_likes+" person likes this</div>";
+	}else if(main_likes>0){
+		main_likes_data="<div class='like_container'><img src='/images/LikeButton.svg'> "+main_likes+" people like this</div>";
+	}
+
 	$("#mainPhoto").empty();
 	$("#mainPhoto").show();
-	$("#mainPhoto").append("<img class='main_image' src='"+data.source+"' data-all='"+fold+","+id+","+folderID+"'>");
+	$("#mainPhoto").append("<div><img class='main_image' src='"+data.source+"' data-all='"+fold+","+id+","+folderID+"'></div>"+main_likes_data);
 
 	// Adds comments to picture 
 	var comment = "<ul class='comment_container'>";
 	if(data.comments!=undefined){
 		for(var x in data.comments.data){
-			comment+="<li class='comment_div'><span class='name'> "+data.comments.data[x].from.name+"</span>"+data.comments.data[x].message+"</li>";
+			var likes = ""; 
+			if(data.comments.data[x].like_count>0){
+				likes="<div class='like_container'><img src='/images/LikeButton.svg'> "+data.comments.data[x].like_count+"</div>";
+			}
+			comment+="<li class='comment_div'><span class='name'> "+data.comments.data[x].from.name+"</span> "+data.comments.data[x].message+likes+"</li>";
 		}
 		comment+="</ul>";	
 		$("#mainPhoto").append(comment);
@@ -598,7 +685,7 @@ function loadAlbumPosts(dataID){
 					firstID=response.data[pic].id;
 				}
 				response.data[pic].my_previous = prevID;
-				response.data[pic].my_next = firstID;
+				response.data[pic].my_next = null;//firstID;
 				if(prevID!=null){
 					album_data[dataID]["pics"][prevID].my_next = response.data[pic].id;
 				}
@@ -615,7 +702,7 @@ function loadAlbumPosts(dataID){
 				$("#mainPhoto > .loadMore").html("DONENANANA");
 			}
 			if(meta("one_pic")=="true"){
-				$("#right_bar .side_button:first-of-type").click();
+				$("#nav_bar-next").click();
 			}
 		},"json");
 	}else{
@@ -627,8 +714,12 @@ function loadAlbumPosts(dataID){
 function loadComments(toAppend, data){
 	$.get(data.paging.next,function (response){
 		for(var pic in response.data){
+			var likes = ""; 
+			if(response.data[pic].like_count>0){
+				likes="<div class='like_container'><img src='/images/LikeButton.svg'> "+response.data[pic].like_count+"</div>";
+			}
 			data.data.push(response.data[pic]);
-			$(toAppend).append("<div class='comment_div'><span class='name'> "+response.data[pic].from.name+"</span> "+response.data[pic].message+"</div>");
+			$(toAppend).append("<div class='comment_div'><span class='name'> "+response.data[pic].from.name+"</span> "+response.data[pic].message+likes+"</div>");
 		}
 		data.paging.next=response.paging.next;
 		if(response.paging.next!=undefined){
@@ -649,7 +740,7 @@ function loadPosts(toAppend){
 					firstID=response.data[pic].id;
 				}
 				response.data[pic].my_previous = prevID;
-				response.data[pic].my_next = firstID;
+				response.data[pic].my_next = null;//firstID;
 				if(prevID!=null){
 					pic_data[toAppend]["data"][prevID].my_next=response.data[pic].id;
 				}
@@ -666,7 +757,7 @@ function loadPosts(toAppend){
 				pic_data[toAppend].next=null;
 			}
 			if(meta("one_pic")=="true"){
-				$("#right_bar .side_button:first-of-type").click();
+				$("#nav_bar-next").click();
 			}			
 		},"json");
 	}else{

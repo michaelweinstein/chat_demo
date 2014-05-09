@@ -1,4 +1,5 @@
 var FB;
+// $.noConflict();
 
 $('document').ready(function() {
 	queueAdd(getFB);

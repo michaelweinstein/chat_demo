@@ -2,6 +2,7 @@
 // http://stackoverflow.com/questions/12743356/how-to-call-fb-api-outside-window-fbasyncinit/12746422#12746422
 
 var FB; // to avoid error "undeclared variable", until FB gets initialized
+// $.noConflict();
 
 var myQueue = new Array();
 
