@@ -4,7 +4,6 @@ is some sugar in here to support those.  The dwell_script.js has details of how 
 It's probably bad if you're looking at this file, so let Abby know if you're having a hard time.
 */
 
-$.noConflict();
 (function($){
 var timeout;
 $.fn.dwell = function(delay, click, new_color, new_color_2){

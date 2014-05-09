@@ -12,7 +12,7 @@ var id='';
 		$('.chat-message').show();
 		$(this).parent().css('display', 'block');
 		id = $(this).parent().attr('id');
-		alert($(this).parent());
+		// alert($(this).parent());
 
 		//buttons
 		$('#compose_button').show();
@@ -66,7 +66,7 @@ var id='';
 	//Post
 	$('#post_button').on('click', function(){
 	// $('textarea.chat-textarea').on('click', function() {
-		alert('posted');
+		// alert('posted');
 		// $('.sendXMPPMessage').submit();
 		// $('.chat-textarea').submit();
 		// var enter = 13;
@@ -86,8 +86,8 @@ var id='';
 	});
 
 	$('textarea.chat-textarea').keypress(function(e){
-		console.log('caught');
-		console.log(e);
+		// console.log('caught');
+		// console.log(e);
 	});	
 }
 
