@@ -14,10 +14,10 @@
 	display: none;
 }
 #controlbox{
-	/*display: none !important;*/
+	display: none !important;
 }
 #converse-roster{
-	/*display: none !important;*/
+	display: none !important;
 }
 
 /******  Conversation Previews  *****/

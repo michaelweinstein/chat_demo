@@ -99,6 +99,24 @@ function start(FB) {
 			});*/
 	// Initialize Converse.js on start(), and pass in FB object 
 	startConverse(FB);
+
+
+
+	//Frame stuff
+	// Scrolls down
+	$("#bottom_bar").click(function(){
+		if(!shouldPause("bar")){
+			$(".loadMore").click();
+			scrollVertical(300);
+		}
+	});
+	// Scrolls up when top bar clicked
+	$("#top_bar").click(function(){
+		if(!shouldPause("bar")){
+			scrollVertical(-300);
+		}
+	});
+
 	// styleStart(); //ADDED FRIDAY 3:30
 }
 
@@ -134,14 +152,14 @@ function startConverse(FB) {
 			// $(message).css('border', '3px red solid');
 			// console.log('-----------------');
 
-			$(message_package).after('<div> Foobar </div>');
-			console.log(message_package);
+			// $(message_package).after('<div> Foobar </div>');
+			// console.log(message_package);
 			// console.log(message_package['message']);
 			// console.log(message_package['sender']);
 
 			// alert(message_package.sender);
 			// refactor2(message_package[message], message_package[sender]);
-			// refactor2(message);
+			refactor2(message_package);
 		});
 		// .chat-box (box id)
 		converse.on('new_chat_box', function(e, boxID) {
@@ -154,7 +172,7 @@ function startConverse(FB) {
 		converse.on('set_chat_box_view', function(e, obj) {
 			console.log('CAUGHT -- set_key_pressed Event');
 			chatBoxView = obj;
-			console.log(chatBoxView);
+			// console.log(chatBoxView);
 		});
 
     });
@@ -166,13 +184,8 @@ var rendered_rooms = {};
 var rendered_array = [];
 
 function refactor2(message){
-	console.log('in here');
-				//deal with the new message
-		console.log('___________________');
-		console.log(message);
-		// console.log($(message)[0]);
-		// console.log(fullname);
-		console.log('___________________');
+		console.log('HERE');
+		console.log($(message));
 
 	if(count === 0){
 		
@@ -184,7 +197,13 @@ function refactor2(message){
 		count++;
    }
 
-//for each chatbox       	
+	// var message = $.trim($(content).html());
+	// var txt = "<ul class='txt'><li class='name'> " + name + " </li><li class='message'> "+ message +" <li></ul>";
+
+	// $(box).children('div.chat-head.chat-head-chatbox').after(right_bar_button);
+	// $(box).children('div.chat-head.chat-head-chatbox').after(txt);		
+
+// for each chatbox       	
 	$('.chatbox').each(function(){
 		var thisID = $(this).attr('id');
 		if( rendered_rooms[thisID] == undefined ){
@@ -193,29 +212,34 @@ function refactor2(message){
 			$('.chat-content').hide();	
 			$('#controlbox').hide();	
 
-			
 			// console.log(thisID);
 			// Get our info
 			var name = $.trim($(this).children('.chat-head').text());
-			var message = $.trim($(this).children('.chat-content').html());
-			id = $.trim($(this).attr('id')) + '-button';
-			var txt = "<ul class='txt'><li class='name'> " + name + " </li><li class='message'> "+ message +" <li></ul>";
+			// var message = $.trim($(this).children('.chat-content').html());
+			var cb_id = $.trim($(this).attr('id'));
+			// var txt = "<ul class='txt'><li class='name'> " + name + " </li><li class='message'> "+ message +" <li></ul>";
+			var create_list = "<ul class='txt' id='" +cb_id+"-ul'><li class='name'> " + name + " </li></ul>";
 			var right_bar_button='';
 
 			//Add our next button
 			if(name != 'ContactsRooms'){
-				right_bar_button = "<div class='side_button' id='"+id+"'><img src='../images/page_framework/RightButton.svg'><p>View</p> </div>";	
+				right_bar_button = "<div class='side_button' id='"+cb_id+"-button'><img src='../images/page_framework/RightButton.svg'><p>View</p> </div>";	
 			}
 			
 			// console.log('pic '+pic);
 			$(this).children('div.chat-head.chat-head-chatbox').after(right_bar_button);
-			$(this).children('div.chat-head.chat-head-chatbox').after(txt);		
+			$(this).children('div.chat-head.chat-head-chatbox').after(create_list);		
 
 			//say room has been rendere
 			rendered_rooms[thisID] = true;	
 		}
 
 
+		// var name = $.trim($(this).children('.chat-head').text());
+		// var message = $.trim($(this).children('.chat-content').html());
+		// id = $.trim($(this).attr('id')) + '-button';
+		// var txt = "<ul class='txt'><li class='name'> " + name + " </li><li class='message'> "+ message +" <li></ul>";
+		// var right_bar_button='';		
 
 
 
@@ -226,4 +250,33 @@ function refactor2(message){
 
 
 }
+
+
+// Determines which clickable content should be paused when called
+function shouldPause(item){
+	var currName = $("#left_bar li:last-of-type p").text();
+	// "Unpause" is shown if everything is paused 
+	if(currName.search("Unpause")>=0){
+		return true;
+		// "Pause all" is shown if only main content is paused
+	}else if(currName.search("Pause All")>=0){
+		if(item=="main"){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	// "Pause main" is shown if nothing is paused 
+	return false;
+}
+// Scrolls up or down page
+function scrollVertical(num) {
+    var iScroll = $("#frame").scrollTop();
+    iScroll = iScroll + num;
+    $("#frame").animate({
+    	scrollTop: iScroll
+    }, 1000);
+
+}
+
 
