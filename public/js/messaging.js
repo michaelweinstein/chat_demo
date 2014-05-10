@@ -160,7 +160,7 @@ function startConverse(FB) {
 
 			// alert(message_package.sender);
 			// refactor2(message_package[message], message_package[sender]);
-			refactor2(message_package);
+			refactor2(message, box_id);
 		});
 		// .chat-box (box id)
 		converse.on('new_chat_box', function(e, boxID) {
@@ -183,7 +183,7 @@ var count=0;
 var rendered_rooms = {};
 var rendered_array = [];
 
-function refactor2(message){
+function refactor2(message, id){
 		console.log('HERE');
 		console.log($(message));
 
@@ -239,7 +239,9 @@ function refactor2(message){
 		// var message = $.trim($(this).children('.chat-content').html());
 		// id = $.trim($(this).attr('id')) + '-button';
 		// var txt = "<ul class='txt'><li class='name'> " + name + " </li><li class='message'> "+ message +" <li></ul>";
-		// var right_bar_button='';		
+		// var right_bar_button='';	
+		$('#'+id+'-ul').append(message);
+		console.log($('#'+id+'-ul'));	
 
 
 
