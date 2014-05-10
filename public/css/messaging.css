@@ -38,7 +38,7 @@
 	clear: both;
 }
 .border-div:first{
-	border: none;
+	/*border: none;*/
 }
 /*div.chat-head.chat-head-chatbox:first-child{
 	border: none;

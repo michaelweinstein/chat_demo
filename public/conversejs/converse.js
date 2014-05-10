@@ -1018,7 +1018,8 @@
                 
 ////////////////////////
                 console.log('!! - showMessage completed');
-                converse.emit('show_new_message', message);
+                var toSend = {'message': message, 'sender': sender}
+                converse.emit('show_new_message', toSend);
 
                 return this.scrollDown();
             },
