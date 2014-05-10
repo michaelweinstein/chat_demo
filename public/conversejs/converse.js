@@ -1018,6 +1018,10 @@
                 
 ////////////////////////
                 console.log('!! - showMessage completed');
+                console.log('fullname: '+fullname);
+                console.log('username: '+username);
+                console.log('sender: '+msg_dict.sender);
+
                 var toSend = {'message': message, 'sender': sender}
                 converse.emit('show_new_message', toSend);
 

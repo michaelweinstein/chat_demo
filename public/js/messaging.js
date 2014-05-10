@@ -165,7 +165,7 @@ var count=0;
 var rendered_rooms = {};
 var rendered_array = [];
 
-function refactor2(message, sender){
+function refactor2(message){
 	console.log('in here');
 				//deal with the new message
 		console.log('___________________');
