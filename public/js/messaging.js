@@ -134,6 +134,7 @@ function startConverse(FB) {
 			// $(message).css('border', '3px red solid');
 			// console.log('-----------------');
 
+			$(message_package).after('<div> Foobar </div>');
 			console.log(message_package);
 			// console.log(message_package['message']);
 			// console.log(message_package['sender']);
