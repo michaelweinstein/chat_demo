@@ -135,18 +135,21 @@ function startConverse(FB) {
         });
 //////
 		// .chat-message (<div> message object)
-		converse.on('show_new_message', function(e, message) {
+		converse.on('show_new_message', function(e, message_package) {
 			console.log('CAUGHT -- show_new_message Event CAUGHT!!');
 			// console.log('-----------------');
-			console.log(message);
+			// console.log(message);
 			// $(message).show();
 			// $(message).css('border', '3px red solid');
 			// console.log('-----------------');
 
-			// console.log(message_package);
+			console.log(message_package);
+			// console.log(message_package['message']);
+			// console.log(message_package['sender']);
+
 			// alert(message_package.sender);
 			// refactor2(message_package[message], message_package[sender]);
-			refactor2(message);
+			// refactor2(message);
 		});
 		// .chat-box (box id)
 		converse.on('new_chat_box', function(e, boxID) {
@@ -162,7 +165,7 @@ var count=0;
 var rendered_rooms = {};
 var rendered_array = [];
 
-function refactor2(message){
+function refactor2(message, sender){
 	console.log('in here');
 				//deal with the new message
 		console.log('___________________');
