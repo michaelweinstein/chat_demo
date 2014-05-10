@@ -52,14 +52,15 @@ var id='';
 
 		$('.chat-message').show();
 		$('.chat-textarea').hide();
+		$('.chatbox').hide();
 		$('.sendXMPPMessage').css('height', '0');
 		$('.sendXMPPMessage').css('width', '0');
 
 		// $(this).parent().css('display', 'block');
-		$('#'+id).show();
-		// alert(id);
+		$('#'+id).css('display', 'block');
+		console.log('#'+id);
 
-		
+		//burrons
 		$('#compose_button').show();
 		$('#back_full_convo').show();
 		$('#back_reply').hide();
@@ -125,14 +126,21 @@ function startConverse(FB) {
         });
 //////
 		// .chat-message (<div> message object)
-		converse.on('show_new_message', function(e, message) {
+		converse.on('show_new_message', function(e, message_package) {
 			console.log('CAUGHT -- show_new_message Event CAUGHT!!');
 			// console.log('-----------------');
 			// console.log(message);
 			// $(message).show();
 			// $(message).css('border', '3px red solid');
 			// console.log('-----------------');
-			refactor2(message);
+
+			console.log(message_package);
+			// console.log(message_package['message']);
+			// console.log(message_package['sender']);
+
+			// alert(message_package.sender);
+			// refactor2(message_package[message], message_package[sender]);
+			// refactor2(message);
 		});
 		// .chat-box (box id)
 		converse.on('new_chat_box', function(e, boxID) {
@@ -151,12 +159,20 @@ function startConverse(FB) {
     });
 }
 
-console.log('setting up rendered rooms');
+// console.log('setting up rendered rooms');
 var count=0;
 var rendered_rooms = {};
 var rendered_array = [];
 
-function refactor2(id){
+function refactor2(message, sender){
+	console.log('in here');
+				//deal with the new message
+		console.log('___________________');
+		console.log(message);
+		// console.log($(message)[0]);
+		// console.log(fullname);
+		console.log('___________________');
+
 	if(count === 0){
 		
 		//And get ourselves set up
@@ -176,8 +192,8 @@ function refactor2(id){
 			$('.chat-content').hide();	
 			$('#controlbox').hide();	
 
-			console.log('___________________')
-			console.log(thisID);
+			
+			// console.log(thisID);
 			// Get our info
 			var name = $.trim($(this).children('.chat-head').text());
 			var message = $.trim($(this).children('.chat-content').html());
@@ -197,6 +213,11 @@ function refactor2(id){
 			//say room has been rendere
 			rendered_rooms[thisID] = true;	
 		}
+
+
+
+
+
 		styleStart();
 			
 
