@@ -1023,9 +1023,9 @@
                 $el.append(mess);
                 
 ///////////////////
-                console.log('EMITTING show_new_message event');
-                // var toSend = {'message': message, 'fullname': msg_dict.fullname};
-                converse.emit('show_new_message', mess);
+                console.log('EMITTING show_new_message event (message <div> and ChatBoxView object)');
+                var toSend = {'message': mess, 'box': this};
+                converse.emit('show_new_message', toSend);
 
                 return this.scrollDown();
             },
