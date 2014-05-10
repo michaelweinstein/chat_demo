@@ -1,4 +1,7 @@
 
+// Set in converse.on('set_chat_box_view'), emitted on ChatBoxView.initialize
+var chatBoxView;
+
 /* Abby's start() method from abby_js.js.
 Creates listeners for created elements. */
 function styleStart() {
@@ -63,31 +66,19 @@ var id='';
 		$('#post_button').hide();			
 	});
 
-	//Post
+	/* Posting a message */
+
+	//Post button click
 	$('#post_button').on('click', function(){
-	// $('textarea.chat-textarea').on('click', function() {
-		// alert('posted');
-		// $('.sendXMPPMessage').submit();
-		// $('.chat-textarea').submit();
-		// var enter = 13;
-		// var e = jQuery.Event("keydown");
-		// console.dir(e);
-		// e.which = 13; // some value (backspace = 8)
-		// $('textarea.chat-textarea').trigger(e);
-
-		// var e = jQuery.Event("keypress", {keyCode: 13});
-		// e.which = 13; 
-		// $('textarea.chat-textarea').on('keypress', function(e) {
-		//    console.log(e.which);
-		// });
-		// $('textarea.chat-textarea').trigger(e);
-
-		// $(document).trigger(e);​
+		console.log('Posting message (emitting keypress event)');
+		var e = jQuery.Event("keypress", {keyCode: 13});
+		e.which = 13; 
+		$('textarea.chat-textarea').trigger(e);
 	});
 
+	// Catches event triggered by Post button click
 	$('textarea.chat-textarea').keypress(function(e){
-		// console.log('caught');
-		// console.log(e);
+		chatBoxView.keyPressed(e);
 	});	
 }
 
@@ -149,6 +140,14 @@ function startConverse(FB) {
 			console.log(boxID);
 			// refactor2(boxID);
 		});
+
+		/* Receives instance of ChatBoxView when it is initialized */
+		converse.on('set_chat_box_view', function(e, obj) {
+			console.log('CAUGHT -- set_key_pressed Event');
+			chatBoxView = obj;
+			console.log(chatBoxView);
+		});
+
     });
 }
 

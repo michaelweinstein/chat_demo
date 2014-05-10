@@ -974,6 +974,11 @@
 //////////////
                 console.log('!! -- new_chat_box Event Emitted');
                 converse.emit('new_chat_box', this.model.get('box_id'));
+
+//////////////
+                /* Passes instance of ChatBoxView when initialized */
+                console.log('EMITTED -- set_key_pressed');
+                converse.emit('set_chat_box_view', this);
             },
 
             render: function () {
