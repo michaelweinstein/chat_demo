@@ -152,10 +152,11 @@ function startConverse(FB) {
 			// $(message).css('border', '3px red solid');
 			// console.log('-----------------');
 
-			// $(message_package).after('<div> Foobar </div>');
-			// console.log(message_package);
-			// console.log(message_package['message']);
-			// console.log(message_package['sender']);
+			var message = message_package['message'];
+			var box_id = message_package['box'].$el[0].id;
+
+			// console.log(message);
+			// console.log('box_id: ' + box_id);
 
 			// alert(message_package.sender);
 			// refactor2(message_package[message], message_package[sender]);
@@ -172,7 +173,6 @@ function startConverse(FB) {
 		converse.on('set_chat_box_view', function(e, obj) {
 			console.log('CAUGHT -- set_key_pressed Event');
 			chatBoxView = obj;
-			// console.log(chatBoxView);
 		});
 
     });
