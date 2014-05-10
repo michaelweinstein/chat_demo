@@ -974,6 +974,11 @@
 //////////////
                 console.log('!! -- new_chat_box Event Emitted');
                 converse.emit('new_chat_box', this.model.get('box_id'));
+
+//////////////
+                /* Passes instance of ChatBoxView when initialized */
+                console.log('EMITTED -- set_key_pressed');
+                converse.emit('set_chat_box_view', this);
             },
 
             render: function () {
@@ -1014,16 +1019,13 @@
                     'message': '',
                     'extra_classes': msg_dict.delayed && 'delayed' || ''
                 });
-                $el.append($(message).children('.chat-message-content').first().text(text).addHyperlinks().addEmoticons().parent());
+                var mess = $(message).children('.chat-message-content').first().text(text).addHyperlinks().addEmoticons().parent();
+                $el.append(mess);
                 
-////////////////////////
-                console.log('!! - showMessage completed');
-                console.log('fullname: '+fullname);
-                console.log('username: '+username);
-                console.log('sender: '+msg_dict.sender);
-
-                var toSend = {'message': message, 'sender': sender}
-                converse.emit('show_new_message', toSend);
+///////////////////
+                console.log('EMITTING show_new_message event');
+                // var toSend = {'message': message, 'fullname': msg_dict.fullname};
+                converse.emit('show_new_message', mess);
 
                 return this.scrollDown();
             },
